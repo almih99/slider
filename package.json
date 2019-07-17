@@ -2,11 +2,11 @@
   "name": "slider",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/example.htm",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "parcel src/index.js",
-    "build": "parcel build src/index.js"
+    "dev": "parcel src/example.htm --open",
+    "build": "parcel build src/example.htm"
   },
   "keywords": [],
   "author": "",
