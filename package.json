@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/example.htm",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha",
     "dev": "parcel src/example.htm --open",
     "build": "parcel build src/example.htm"
   },
@@ -12,6 +12,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.2.0",
     "parcel-bundler": "^1.12.3"
   }
 }
