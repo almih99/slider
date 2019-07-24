@@ -3,8 +3,93 @@ assert = chai.assert;
 
 const Subject = require( "../src/subject");
 
+
 describe("Subject", function () {
-    describe("Using single function as observer", function(){
+
+    class Observable extends Subject {};
+
+    describe("constructor", function () {
+
+        it("array existance", function () {
+            let obs = new Observable();
+            assert.typeOf(obs._observers, "array");
+        });
+
+        it("initial array length = 0", function () {
+            let obs = new Observable();
+            assert.strictEqual(obs._observers.length, 0);
+        });
+
+    });
+
+    describe("makeObservable", function () {
+
+        let obs = {};
+        
+        before(function () {
+            // makes existing object observable
+            Subject.makeObservable(obs);
+        });
+
+        it("array existance", function () {
+            assert.typeOf(obs._observers, "array");
+        });
+        
+        it("initial array length = 0", function () {
+            assert.strictEqual(obs._observers.length, 0);
+        });
+
+        it("register method existance", function () {
+            assert.typeOf(obs.register, "function");
+        });
+
+        it("unregister method existance", function () {
+            assert.typeOf(obs.unregister, "function");
+        });
+
+        it("notifyObservers method existance", function () {
+            assert.typeOf(obs.notifyObservers, "function");
+        });
+
+    });
+
+    describe("#register", function () {
+
+        it("register single observer w/o object");
+
+        it("register multiple observer w/o object");
+
+        it("register single observer with object");
+
+        it("register multiple observer with object");
+
+    });
+
+    describe("#unregister", function () {
+
+        it("attempt to remove observer with wrong function");
+
+        it("attempt to remove observer with wrong object");
+
+        it("remove observer");
+
+        it("attempt to remove from empty observers list");
+
+    });
+
+    describe("#notifyObservers", function () {
+
+        it("call with empty observers list");
+
+        it("call with single function w/o object");
+
+        it("call with single function with object");
+
+        it("call with multiple entries");
+
+     });
+
+    describe("Using single function as observer", function() {
         
         it("checking existance of object", function(){
             let s = new Subject();
@@ -95,10 +180,5 @@ describe("Subject", function () {
             let s = new Subject();
             assert.doesNotThrow(s.notifyObservers.bind(s));
         });
-        it("tst", function(done) {
-            done(0);
-        })
-    })
-
-
+    });
 }) 
