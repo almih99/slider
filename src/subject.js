@@ -56,6 +56,21 @@ class Subject {
             this._observers.splice(index,1);
         }
     }
+
+    createObserverableProperty(propertyName, value) {
+        Object.defineProperty(this, propertyName, {
+            enumerable: true,
+            configurable: true,
+            value: value,
+            set: function(v) {
+                value=v; // variable from closure
+                this.notifyObservers(this);
+            },
+            get: function() {
+                return value; // variable from closure
+            }
+        })
+    }
 }
 
 /**
@@ -65,10 +80,11 @@ class Subject {
  * 
  * It doesn't change chain of prototypes.
  * 
+ * @static
  * @param {object} obj Object to be observed.
  * @returns {object}
  */
-function makeObservable(obj) {
+Subject.makeObservable = function (obj) {
   obj._observers=[];
   // copy propertyes from prototype to object.
   for(key of Object.getOwnPropertyNames(Subject.prototype)) {
@@ -78,9 +94,7 @@ function makeObservable(obj) {
 }
 
 module.exports = Subject;
-exports.makeObservable = makeObservable;
 
 /*
-export {Subject, makeObservable};
 export default Subject;
 */
