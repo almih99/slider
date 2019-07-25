@@ -39,16 +39,20 @@ describe("Subject", function () {
             assert.strictEqual(observable._observers.length, 0);
         });
 
-        it("register method existance", function () {
+        it("`register` method existance", function () {
             assert.typeOf(observable.register, "function");
         });
 
-        it("unregister method existance", function () {
+        it("`unregister` method existance", function () {
             assert.typeOf(observable.unregister, "function");
         });
 
-        it("notifyObservers method existance", function () {
+        it("`notifyObservers` method existance", function () {
             assert.typeOf(observable.notifyObservers, "function");
+        });
+
+        it("`createObserverableProperty` method existance", function () {
+            assert.typeOf(observable.createObserverableProperty, "function");
         });
 
     });
@@ -217,7 +221,7 @@ describe("Subject", function () {
             assert(result);
         });
 
-        it("multiple property added", function () {
+        it("multiple property adding", function () {
             observable.createObserverableProperty("newProperty1", 1);
             observable.createObserverableProperty("newProperty2", 2);
             observable.createObserverableProperty("newProperty3", 3);
