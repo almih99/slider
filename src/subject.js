@@ -57,11 +57,21 @@ class Subject {
         }
     }
 
+    /**
+     * Creates new observable property.
+     * Value is stored in closure.
+     * On changing value calls notifyObservers() with whole object as argument.
+     * 
+     * Your don't have use it for every observable property.
+     * But it makes things simple.
+     * 
+     * @param {string} propertyName name of new property
+     * @param {*} [value] initial value
+     */
     createObserverableProperty(propertyName, value) {
         Object.defineProperty(this, propertyName, {
             enumerable: true,
             configurable: true,
-            value: value,
             set: function(v) {
                 value=v; // variable from closure
                 this.notifyObservers(this);
@@ -94,7 +104,3 @@ Subject.makeObservable = function (obj) {
 }
 
 module.exports = Subject;
-
-/*
-export default Subject;
-*/

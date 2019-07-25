@@ -11,174 +11,255 @@ describe("Subject", function () {
     describe("constructor", function () {
 
         it("array existance", function () {
-            let obs = new Observable();
-            assert.typeOf(obs._observers, "array");
+            let observable = new Observable();
+            assert.typeOf(observable._observers, "array");
         });
 
         it("initial array length = 0", function () {
-            let obs = new Observable();
-            assert.strictEqual(obs._observers.length, 0);
+            let observable = new Observable();
+            assert.strictEqual(observable._observers.length, 0);
         });
 
     });
 
     describe("makeObservable", function () {
 
-        let obs = {};
+        let observable = {};
         
         before(function () {
             // makes existing object observable
-            Subject.makeObservable(obs);
+            Subject.makeObservable(observable);
         });
 
         it("array existance", function () {
-            assert.typeOf(obs._observers, "array");
+            assert.typeOf(observable._observers, "array");
         });
         
         it("initial array length = 0", function () {
-            assert.strictEqual(obs._observers.length, 0);
+            assert.strictEqual(observable._observers.length, 0);
         });
 
         it("register method existance", function () {
-            assert.typeOf(obs.register, "function");
+            assert.typeOf(observable.register, "function");
         });
 
         it("unregister method existance", function () {
-            assert.typeOf(obs.unregister, "function");
+            assert.typeOf(observable.unregister, "function");
         });
 
         it("notifyObservers method existance", function () {
-            assert.typeOf(obs.notifyObservers, "function");
+            assert.typeOf(observable.notifyObservers, "function");
         });
 
     });
 
     describe("#register", function () {
 
-        it("register single observer w/o object");
+        const testFunc1 = done => 1;
+        const testFunc2 = done => 2;
 
-        it("register multiple observer w/o object");
+        const testObj1 = { o1Method () {return 1} };
+        const testObj2 = { o2Method () {return 2} };
 
-        it("register single observer with object");
+        it("register single observer w/o object", function () {
+            let observable = new Observable;
+            observable.register(testFunc1);
+            assert.strictEqual(observable._observers.length, 1);
+        });
 
-        it("register multiple observer with object");
+        it("register multiple observer w/o object", function () {
+            let observable = new Observable;
+            observable.register(testFunc1);
+            observable.register(testFunc2);
+            assert.strictEqual(observable._observers.length, 2);
+        });
+
+        it("register single observer with object", function () {
+            let observable = new Observable;
+            observable.register(testObj1.o1Method, testObj1);
+            assert.strictEqual(observable._observers.length, 1);
+        });
+
+        it("register multiple observer with object", function () {
+            let observable = new Observable;
+            observable.register(testObj1.o1Method, testObj1);
+            observable.register(testObj2.o1Method, testObj2);
+            assert.strictEqual(observable._observers.length, 2);
+        });
 
     });
 
     describe("#unregister", function () {
 
-        it("attempt to remove observer with wrong function");
+        const testFunc = done => "function";
+        const testObj = {
+            oMethod () {return "object method"},
+            oAnotherMethod () {return "object wrong method"}
+        };
 
-        it("attempt to remove observer with wrong object");
+        let observable;
 
-        it("remove observer");
+        beforeEach(function () {
+            observable = new Observable;
+            observable.register(testFunc);
+            observable.register(testObj.oMethod, testObj);
+        });
 
-        it("attempt to remove from empty observers list");
+        it("attempt to remove observer with wrong function", function () {
+            observable.unregister(testObj.oAnotherMethod, testObj);
+            assert.strictEqual(observable._observers.length, 2);
+        });
+
+        it("attempt to remove observer with wrong object", function () {
+            observable.unregister(testObj.oMethod, Math);
+            assert.strictEqual(observable._observers.length, 2);
+        });
+
+        it("remove observer with object", function () {
+            observable.unregister(testObj.oMethod, testObj);
+            assert.strictEqual(observable._observers.length, 1);
+        });
+
+        it("remove observer w/o object", function () {
+            observable.unregister(testFunc);
+            assert.strictEqual(observable._observers.length, 1);
+        });
+
+        it("attempt to remove from empty observers list", function () {
+            observable = new Observable;
+            observable.unregister(testFunc); // no throw test
+            assert.strictEqual(observable._observers.length, 0);
+        });
 
     });
 
     describe("#notifyObservers", function () {
 
-        it("call with empty observers list");
+        let observable;
 
-        it("call with single function w/o object");
+        beforeEach(function () {
+            observable = new Observable();
+        })
 
-        it("call with single function with object");
+        it("call with empty observers list", function (done) {
+            observable.notifyObservers(); // not throws
+            done();
+        });
 
-        it("call with multiple entries");
+        it("call with single function w/o object", function () {
+            let result;
+            let tst1 = x => result=x;
+            observable.register(tst1);
+            observable.notifyObservers("done");
+            assert.strictEqual(result, "done");
+        });
+
+        it("call with single function with object", function () {
+            let lsnr = {
+                result: undefined,
+                tst1: function (x) {this.result = x}
+            }
+            observable.register(lsnr.tst1, lsnr);
+            observable.notifyObservers("done");
+            assert.strictEqual(lsnr.result, "done");
+        });
+
+        it("call with multiple entries", function () {
+            let lsnr1 = { tst: function (x) {this.result = x} }
+            let lsnr2 = Object.create(lsnr1);
+            let lsnr3 = Object.create(lsnr1);
+
+            observable.register(lsnr1.tst, lsnr1);
+            observable.register(lsnr2.tst, lsnr2);
+            observable.register(lsnr3.tst, lsnr3);
+
+            observable.notifyObservers("done");
+
+            assert(
+                lsnr1.result==="done" && 
+                lsnr2.result==="done" && 
+                lsnr3.result==="done"
+            );
+        });
 
      });
 
-    describe("Using single function as observer", function() {
-        
-        it("checking existance of object", function(){
-            let s = new Subject();
-            assert.exists(s);
+    describe("#createObserverableProperty", function () {
+
+        let observable;
+
+        beforeEach(function () {
+            observable = new Observable();
         });
-        it("checking existance of variable _observers", function(){
-            let s = new Subject();
-            assert.exists(s._observers);
+
+        it("property added", function () {
+            observable.createObserverableProperty("newProperty");
+            assert.property(observable, "newProperty");
         });
-        it("whether _observers an Array", function(){
-            let s = new Subject();
-            assert.instanceOf(s._observers, Array);
-        })
-        it("whether _observers initially empty", function(){
-            let s = new Subject();
-            assert.equal(s._observers.length, 0);
-        })
-        it("is function registred", function(){
-            let s = new Subject();
-            let func1= () => 0;
-            s.register(func1);
-            assert.equal(s._observers.length, 1);
-        })
-        it("two function registred", function(){
-            let s = new Subject();
-            let func1= () => 0;
-            let func2= () => 1;
-            s.register(func1);
-            s.register(func2);
-            assert.equal(s._observers.length, 2);
-        })
-        it("call with single function", function(){
-            let s = new Subject();
-            let wasCalled=false;
-            let func1= () => wasCalled=true;
-            s.register(func1);
-            s.notifyObservers();
-            assert.isTrue(wasCalled);
-        })
-        it("call with several functions", function(){
-            let s = new Subject();
-            let wasCalled1=false;
-            let wasCalled2=false;
-            let func1= () => wasCalled1=true;
-            let func2= () => wasCalled2=true;
-            s.register(func1);
-            s.register(func2);
-            s.notifyObservers();
-            assert.isTrue(wasCalled1 && wasCalled2);
-        })
-        it("call with argument functions", function(){
-            let s = new Subject();
-            let wasCalled1=undefined;
-            let wasCalled2=undefined;
-            let func1= (x) => wasCalled1=x;
-            let func2= (x) => wasCalled2=x;
-            s.register(func1);
-            s.register(func2);
-            s.notifyObservers(5);
-            assert.equal(wasCalled1, 5);
-            assert.equal(wasCalled2, 5);
-        })
-        it("remove first function", function() {
-            let s = new Subject();
-            let wasCalled1=false;
-            let wasCalled2=false;
-            let func1= () => wasCalled1=true;
-            let func2= () => wasCalled2=true;
-            s.register(func1);
-            s.register(func2);
-            s.unregister(func1);
-            s.notifyObservers();
-            assert.isTrue(!wasCalled1 && wasCalled2);
-        })
-        it("remove second function", function() {
-            let s = new Subject();
-            let wasCalled1=false;
-            let wasCalled2=false;
-            let func1= () => wasCalled1=true;
-            let func2= () => wasCalled2=true;
-            s.register(func1);
-            s.register(func2);
-            s.unregister(func2);
-            s.notifyObservers();
-            assert.isTrue(wasCalled1 && !wasCalled2);
-        })
-        it("notification without registred functious", function() {
-            let s = new Subject();
-            assert.doesNotThrow(s.notifyObservers.bind(s));
+
+        it("property getting", function () {
+            observable.createObserverableProperty("newProperty", "setted");
+            assert.strictEqual(observable.newProperty, "setted");
+        });
+
+        it("property setting", function () {
+            observable.createObserverableProperty("newProperty", "initial");
+            observable.newProperty = "setted"
+            assert.strictEqual(observable.newProperty, "setted");
+        });
+
+        it("notifying when property setted", function () {
+            let result = false;
+            let callback = () => result = true;
+            observable.createObserverableProperty("newProperty", "initial");
+            observable.register(callback);
+            observable.newProperty = "done";
+            assert(result);
+        });
+
+        it("multiple property added", function () {
+            observable.createObserverableProperty("newProperty1", 1);
+            observable.createObserverableProperty("newProperty2", 2);
+            observable.createObserverableProperty("newProperty3", 3);
+            assert(
+                observable.newProperty1===1 &&
+                observable.newProperty2===2 &&
+                observable.newProperty3===3
+            );
+        });
+
+        it("multiple property setting", function () {
+            observable.createObserverableProperty("newProperty1", 1);
+            observable.createObserverableProperty("newProperty2", 2);
+            observable.createObserverableProperty("newProperty3", 3);
+
+            observable.newProperty1 = 10;
+            observable.newProperty2 = 11;
+            observable.newProperty3 = 12;
+
+            assert(
+                observable.newProperty1===10 &&
+                observable.newProperty2===11 &&
+                observable.newProperty3===12
+            );
+        });
+
+        it("notifying when each property setted", function () {
+
+            let result=0;
+            let callback = () => result++;
+
+            observable.register(callback);
+
+            observable.createObserverableProperty("newProperty1", 1);
+            observable.createObserverableProperty("newProperty2", 2);
+            observable.createObserverableProperty("newProperty3", 3);
+
+            observable.newProperty1 = 10;
+            observable.newProperty2 = 11;
+            observable.newProperty3 = 12;
+
+            assert.strictEqual(result, 3);
         });
     });
-}) 
+});
