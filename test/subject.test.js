@@ -39,19 +39,19 @@ describe("Subject", function () {
             assert.strictEqual(observable._observers.length, 0);
         });
 
-        it("`register` method existance", function () {
+        it("check #register method existance", function () {
             assert.typeOf(observable.register, "function");
         });
 
-        it("`unregister` method existance", function () {
+        it("check #unregister method existance", function () {
             assert.typeOf(observable.unregister, "function");
         });
 
-        it("`notifyObservers` method existance", function () {
+        it("check #notifyObservers method existance", function () {
             assert.typeOf(observable.notifyObservers, "function");
         });
 
-        it("`createObserverableProperty` method existance", function () {
+        it("check #createObserverableProperty method existance", function () {
             assert.typeOf(observable.createObserverableProperty, "function");
         });
 
