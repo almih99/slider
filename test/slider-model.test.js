@@ -29,33 +29,18 @@ describe("SliderModel", function () {
 
     describe("check if properties are observable", function () {
 
-        it("property #value is observable", function (done) {
-            let instance = new SliderModel();
-            instance.register(() => done());
-            //trigger notification:
-            instance.value = 0;
-        });
+        this.timeout(10);
 
-        it("property #min is observable", function (done) {
-            let instance = new SliderModel();
-            instance.register(() => done());
-            //trigger notification:
-            instance.min = -10;
-        });
-
-        it("property #max is observable", function (done) {
-            let instance = new SliderModel();
-            instance.register(() => done());
-            //trigger notification:
-            instance.max = 10;
-        });
-
-        it("property #step is observable", function (done) {
-            let instance = new SliderModel();
-            instance.register(() => done());
-            //trigger notification:
-            instance.step = 1;
-        });
+        const props = ['value', 'min', 'max', 'step'];
+        
+        for(let prop of props) {
+            it(`property #${prop} is observable`, function (done) {
+                let instance = new SliderModel();
+                instance.register(() => done());
+                //trigger notification:
+                instance[prop] = 13;
+            });
+        }
 
     });
 

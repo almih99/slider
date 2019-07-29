@@ -7,33 +7,18 @@ describe("SliderUIModel", function () {
 
     describe("check if properties are observable", function () {
 
-        it("property #direction is observable", function (done) {
-            let instance = new SliderUIModel();
-            instance.register(() => done());
-            // trigger notification
-            instance.direction = 0;
-        });
+        this.timeout(10)
 
-        it("property #showScale is observable", function (done) {
-            let instance = new SliderUIModel();
-            instance.register(() => done());
-            // trigger notification
-            instance.showScale = 0;
-        });
+        const props = ['direction', 'showScale', 'showValue', 'valueUnits'];
 
-        it("property #showValue is observable", function (done) {
-            let instance = new SliderUIModel();
-            instance.register(() => done());
-            // trigger notification
-            instance.showValue = 0;
-        });
-
-        it("property #valueUnits is observable", function (done) {
-            let instance = new SliderUIModel();
-            instance.register(() => done());
-            // trigger notification
-            instance.valueUnits = 0;
-        });
+        for( let prop of props) {
+            it(`property #${prop} is observable`, function (done) {
+                let instance = new SliderUIModel();
+                instance.register(() => done());
+                // trigger notification
+                instance[prop] = 13;
+            });
+        }
 
     });
  
