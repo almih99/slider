@@ -11,9 +11,11 @@ class SliderUIModel extends Subject {
     constructor () {
         super();
         this.createObserverableProperty("direction", "horizontal");
-        this.createObserverableProperty("showScale", false);
         this.createObserverableProperty("showValue", true);
         this.createObserverableProperty("valueUnits", "");
+        this.createObserverableProperty("ticks", 0);
+        this.createObserverableProperty("subticks", 0);
+        this.createObserverableProperty("labels", null);
     }
 
 }

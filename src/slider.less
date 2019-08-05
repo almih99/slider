@@ -1,0 +1,264 @@
+
+@rail-color: silver;
+@selection-color: black;
+@rail-thicknes: 6px;
+
+@handler-size: 16px;
+@handler-color: green;
+
+@badge-color: rgb(187, 204, 93);
+@badge-text-color: gray;
+
+//////////////////////////////////////////////////////////////
+// base style
+//////////////////////////////////////////////////////////////
+
+.slider {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+ outline: dotted 1px black;
+    width: 100%;
+
+    &__rail {
+        position: relative;
+        width: 100%;
+        height: @rail-thicknes;
+        margin-top: @handler-size / 2 -  @rail-thicknes / 2;
+        background-color: @rail-color;
+        border-radius: @rail-thicknes / 2;
+      }
+
+    &__rail-hilighted {
+        position: absolute;
+        height: 100%;
+        background-color: @selection-color;
+        left: 10%;
+        width: 80%;
+        border-radius: @rail-thicknes / 2;
+    }
+
+    &__handler {
+        position: absolute;
+        box-sizing: border-box;
+        width: @handler-size;
+        height: @handler-size;
+        background-color: @handler-color;
+        border: solid white 1px;
+        border-radius: 50%;
+        top: @rail-thicknes / 2 - @handler-size / 2;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &_position_left {
+            left: -@handler-size / 2;
+        }
+        
+        &_position_right {
+            right: -@handler-size / 2;
+        }
+
+        &:hover {
+            // transform: scale(1.2);
+            background-color: red;
+        }
+    }
+
+    &__badge {
+        display: none;
+        position: absolute;
+        min-width: 20px;
+        padding: 3px 6px;
+        background-color: @badge-color;
+        color: @badge-text-color;
+        font-weight: bold;
+        transform: translate(calc(-50% + @handler-size / 2), calc(-100% - 6px));
+        text-align: center;
+        border-radius: 5px;
+    }
+    
+    &__badge::after {
+        content: "";
+        position: absolute;
+        width:0;
+        height:0;
+        border: transparent 5px solid;
+        border-top-color: @badge-color;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    &__tick-scale {
+        display: flex;
+        justify-content: space-between;
+    }
+      
+    &__main-tick {
+
+        width: 3px;
+        height: 15px;
+        margin-top:  @handler-size / 2;     
+        background-color: grey;
+        border-radius: 1px;
+    }
+      
+    &__aux-tick {
+        width: 2px;
+        height: 5px;
+        margin-top: @handler-size / 2; 
+        background-color: grey;
+        border-radius: 1px;
+    }
+
+    &__digital-scale {
+        position: relative;
+        box-sizing: border-box;
+        display: flex;
+        margin-top: @handler-size / 2;
+        width: 100%;
+        justify-content: space-evenly;
+    }
+    
+    &__digit {
+        //outline: dotted red 1px;
+        font: 20px sans-serif;
+        color: grey;
+        text-align: center;
+        flex-grow: 1;
+        flex-shrink: 1;
+
+        &:first-child {
+            position: absolute;
+            left: 0;
+            text-align: left;
+        }
+        
+        &:last-child {
+            position: absolute;
+            right: 0;
+            text-align: right;
+        }      
+    }
+  }
+
+//////////////////////////////////////////////////////////////
+// modifer to show current value
+//////////////////////////////////////////////////////////////
+
+.slider_show-badge {
+    padding-top: 40px;
+    .slider__badge {
+        display: block;
+    }
+}
+
+.slider_show-badge.slider_vertical {
+    padding-top: 0px;
+    padding-left: 60px;
+    .slider__badge {
+        display: block;
+    }
+}
+
+  
+//////////////////////////////////////////////////////////////
+// modifer to show vertical slider
+//////////////////////////////////////////////////////////////
+
+.slider_vertical {
+    flex-direction: row;
+    height: 100%;
+    width: auto;
+
+    .slider__rail {
+        width: @rail-thicknes;
+        height: 100%;
+        margin-left: @handler-size / 2 -  @rail-thicknes / 2;
+        margin-top: 0;
+      }
+
+    .slider__rail-hilighted {
+        width: 100%;
+        left: auto; right: auto;
+        top: 10%;
+        height: 50%;  
+    }
+
+    .slider__handler {
+        left: @rail-thicknes / 2 - @handler-size / 2;
+
+        &_position_left {
+            bottom: -@handler-size / 2;
+            top:auto;
+        }
+            
+        &_position_right {
+            top: -@handler-size / 2;
+        }
+    }
+
+    .slider__badge {
+        transform: translateY(calc(-50% + @handler-size / 2));
+        right: @handler-size + 5px;
+    }
+    
+    .slider__badge::after {
+
+        border-top-color: transparent;
+        border-left-color: @badge-color;
+        left: auto;
+        right: -10px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .slider__tick-scale {
+        flex-direction: column;
+    }
+      
+    .slider__main-tick {
+        width: 15px;
+        height: 3px;
+        margin-top:  0;
+        margin-left: 8px;
+    }
+      
+    .slider__aux-tick {
+        width: 5px;
+        height: 2px;
+        margin-top: 0;
+        margin-left: 8px;
+    }
+
+    .slider__digital-scale {
+        flex-direction: column-reverse;
+        margin-left: @handler-size / 2;
+        margin-top: 0;
+        width: auto;
+        height: 100%;
+    }
+    
+    .slider__digit {
+        display: table-cell;
+        vertical-align: middle;
+        outline: dotted red 1px;
+        line-height: inherit;
+
+        &:first-child {
+            position: absolute;
+            left: auto;
+            bottom: 0;
+            line-height: normal;
+        }
+        
+        &:last-child {
+            position: absolute;
+            right: auto;
+            top: 0;
+            line-height: normal;
+        }      
+    }
+}
+  

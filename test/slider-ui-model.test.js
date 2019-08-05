@@ -7,9 +7,9 @@ describe("SliderUIModel", function () {
 
     describe("check if properties are observable", function () {
 
-        this.timeout(10)
+        this.timeout(10);
 
-        const props = ['direction', 'showScale', 'showValue', 'valueUnits'];
+        const props = ['direction', 'showValue', 'valueUnits', 'ticks', 'subticks'];
 
         for( let prop of props) {
             it(`property #${prop} is observable`, function (done) {
