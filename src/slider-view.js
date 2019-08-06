@@ -3,30 +3,26 @@ import SliderController from "./slider-controller.js";
 
 const template = document.createElement("template");
 template.innerHTML = `
-<div class="slider">
+<div class="a99-slider">
 <!--
-  slider_vertical
-  slider_show-badge
-  slider_show-ticks
-  slider_show-digits
-  slider_show-range
-  slider_show-range-line
+  a99-slider_vertical
+  a99-slider_show-badge
 -->
 
-  <div class="slider__rail">
-    <div class="slider__rail-hilighted">
-      <div class="slider__handler slider__handler_position_left">
-          <div class="slider__badge">12</div>
+  <div class="a99-slider__rail">
+    <div class="a99-slider__rail-hilighted">
+      <div class="a99-slider__handler a99-slider__handler_position_left" tabindex="0">
+          <div class="a99-slider__badge">12</div>
       </div>
-      <div class="slider__handler slider__handler_position_right">
-          <div class="slider__badge">365</div>
+      <div class="a99-slider__handler a99-slider__handler_position_right" tabindex="0">
+          <div class="a99-slider__badge">365</div>
       </div>
     </div>
     
   </div>
 
-  <div class="slider__tick-scale"></div>
-  <div class="slider__digital-scale"></div>
+  <div class="a99-slider__tick-scale"></div>
+  <div class="a99-slider__digital-scale"></div>
   
 </div>`;
 
@@ -38,10 +34,13 @@ console.log(node, uiModel);
 
     this._onMouseDown = this._onMouseDown.bind(this);
     this._onMouseMove = this._onMouseMove.bind(this);
-    this._onMouseUp = this._onMouseUp.bind(this);    
+    this._onMouseUp = this._onMouseUp.bind(this);
+    this._onResize =  this._onResize.bind(this);
 
     uiModel.register(this.render, this);
-    this.render(uiModel);
+    this.render();
+
+    window.addEventListener("resize", this._onResize);
 
   }
 
@@ -61,15 +60,19 @@ console.log(node, uiModel);
 
   }
 
+  _onResize (event) {
+    this.render();
+  }
+
   _drawTicks (where, mainTicksCount, auxTicksCount) {
     for(let i=0; i<=mainTicksCount; i++) {
       const mainTicket = document.createElement("div");
-      mainTicket.className="slider__main-tick";
+      mainTicket.className="a99-slider__main-tick";
       where.appendChild(mainTicket);
       if(i!==mainTicksCount) {
         for(let j=1; j<auxTicksCount; j++) {
           const subTicket = document.createElement("div");
-          subTicket.className="slider__aux-tick";
+          subTicket.className="a99-slider__aux-tick";
           where.appendChild(subTicket);
         }
       }
@@ -77,53 +80,62 @@ console.log(node, uiModel);
   }
 
   _drawLabels (where, numberList) {
-    const blockSize = this.uiModel.direction==="vertical" ? where.offsetHeight : where.offsetWidth;
 
-    if(this.uiModel.direction==="vertical") {
-      const verticalPadding = Math.round(where.offsetHeight/(2*(numberList.length-1)))
-      where.style.paddingTop = verticalPadding + "px";
-      where.style.paddingBottom = verticalPadding + "px";
-      where.style.lineHeight = verticalPadding * 2 + "px";
-    } else {
+    function adjustHorizontalSpacing() {
       const horizontallPadding = Math.round(where.offsetWidth/(2*(numberList.length-1)))
       where.style.paddingLeft=horizontallPadding + "px";
       where.style.paddingRight=horizontallPadding + "px";
     }
 
+    function adjustVerticalSpacing() {
+      const verticalPadding = Math.round(where.offsetHeight/(2*(numberList.length-1)))
+      where.style.paddingTop = verticalPadding + "px";
+      where.style.paddingBottom = verticalPadding + "px";
+      where.style.lineHeight = verticalPadding * 2 + "px"
+    }
+
+    if(this.uiModel.direction==="vertical") {
+      adjustVerticalSpacing()
+    } else {
+      adjustHorizontalSpacing()
+    }
+
     for(const mark of numberList) {
       const labelDiv = document.createElement("div");
-      labelDiv.className="slider__digit";
+      labelDiv.className="a99-slider__digit";
       labelDiv.innerHTML=String(mark);
       where.appendChild(labelDiv);
     }
   }
 
-  render (uiModel) {
+  render () {
       this.node.innerHTML="";
       this.node.appendChild(template.content.cloneNode(true));
       
-      const sliderNode = this.node.querySelector(".slider");
+      const sliderNode = this.node.querySelector(".a99-slider");
 
       // slider direction
-      if (uiModel.direction==="vertical") {
-        sliderNode.classList.add("slider_vertical");
+      if (this.uiModel.direction==="vertical") {
+        sliderNode.classList.add("a99-slider_vertical");
       }
 
       // show or hide badges with current values
-      if (uiModel.showValue) {
-        sliderNode.classList.add("slider_show-badge");
+      if (this.uiModel.showValue) {
+        sliderNode.classList.add("a99-slider_show-badge");
       }
 
       // show ticks if it is needed
-      if(uiModel.ticks) {
-        const scale = this.node.querySelector(".slider__tick-scale");
-        this._drawTicks(scale, uiModel.ticks, uiModel.subticks);
+      if(this.uiModel.ticks) {
+        const scale = this.node.querySelector(".a99-slider__tick-scale");
+        this._drawTicks(scale, this.uiModel.ticks, this.uiModel.subticks);
       }
 
       // show digit labels if it is needed
-      if(uiModel.labels && Array.isArray(uiModel.labels) && uiModel.labels.length) {
-        const labels=this.node.querySelector(".slider__digital-scale");
-        this._drawLabels(labels, uiModel.labels);
+      if( this.uiModel.labels && 
+          Array.isArray(this.uiModel.labels) && 
+          this.uiModel.labels.length) {
+        const labels=this.node.querySelector(".a99-slider__digital-scale");
+        this._drawLabels(labels, this.uiModel.labels);
       }
   }
   

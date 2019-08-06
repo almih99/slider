@@ -21,9 +21,9 @@ window.addEventListener("load", function (e) {
 
     uimodel2 = new SliderUIModel();
     uimodel2.direction = "vertical";
-    uimodel2.ticks=10;
-    uimodel2.subticks=5;
-    uimodel2.labels=[0,20,40,60,80,100];
+    uimodel2.ticks=5;
+    uimodel2.subticks=10;
+    uimodel2.labels=["min",100,200,300,400,"max"];
     uimodel2.showValue=true;
     view = new SliderView(document.getElementById("slider2"), uimodel2);
 });

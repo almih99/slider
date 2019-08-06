@@ -1,25 +1,46 @@
 
-@rail-color: silver;
-@selection-color: black;
+@slider-padding: 20px;
+
+@rail-color: rgb(200, 200, 200);
+@selection-color: rgb(229, 87, 61);
 @rail-thicknes: 6px;
 
-@handler-size: 16px;
-@handler-color: green;
+@handler-size: 20px;
+@handler-color: rgb(229, 87, 61);
+@handler-hover-color: darken(@handler-color, 30%);
 
-@badge-color: rgb(187, 204, 93);
-@badge-text-color: gray;
+@badge-color: rgb(229, 87, 61);
+@badge-text-color: white;
+
+@base-font-size: 16px;
+
+@scale-color:darken(@rail-color, 15%);
+
+@main-tick-width: 2px;
+@main-tick-height: 15px;
+@aux-tick-width: 1px;
+@aux-tick-height: 5px;
+
+
+
 
 //////////////////////////////////////////////////////////////
 // base style
 //////////////////////////////////////////////////////////////
 
-.slider {
+.a99-slider {
     position: relative;
     display: flex;
+    box-sizing: border-box;
     flex-direction: column;
     justify-content: center;
- outline: dotted 1px black;
     width: 100%;
+    padding: 0 @slider-padding;
+
+    font-family: sans-serif;
+    font-size: @base-font-size;
+
+    user-select: none;
 
     &__rail {
         position: relative;
@@ -34,8 +55,8 @@
         position: absolute;
         height: 100%;
         background-color: @selection-color;
-        left: 10%;
-        width: 80%;
+        left: 0%;
+        width: 100%;
         border-radius: @rail-thicknes / 2;
     }
 
@@ -61,7 +82,7 @@
 
         &:hover {
             // transform: scale(1.2);
-            background-color: red;
+            background-color: @handler-hover-color;
         }
     }
 
@@ -75,7 +96,7 @@
         font-weight: bold;
         transform: translate(calc(-50% + @handler-size / 2), calc(-100% - 6px));
         text-align: center;
-        border-radius: 5px;
+        border-radius: 4px;
     }
     
     &__badge::after {
@@ -97,19 +118,19 @@
       
     &__main-tick {
 
-        width: 3px;
-        height: 15px;
+        width: @main-tick-width;
+        height: @main-tick-height;
         margin-top:  @handler-size / 2;     
-        background-color: grey;
-        border-radius: 1px;
+        background-color: @scale-color;
+        border-radius: @main-tick-width / 2;
     }
       
     &__aux-tick {
-        width: 2px;
-        height: 5px;
+        width: @aux-tick-width;
+        height: @aux-tick-height;
         margin-top: @handler-size / 2; 
-        background-color: grey;
-        border-radius: 1px;
+        background-color: @scale-color;
+        border-radius: @aux-tick-width / 2;
     }
 
     &__digital-scale {
@@ -123,8 +144,9 @@
     
     &__digit {
         //outline: dotted red 1px;
-        font: 20px sans-serif;
-        color: grey;
+        font-size: 95%;
+        font-weight: bold;
+        color: @scale-color;
         text-align: center;
         flex-grow: 1;
         flex-shrink: 1;
@@ -147,19 +169,15 @@
 // modifer to show current value
 //////////////////////////////////////////////////////////////
 
-.slider_show-badge {
+.a99-slider_show-badge {
     padding-top: 40px;
-    .slider__badge {
+    .a99-slider__badge {
         display: block;
     }
 }
 
-.slider_show-badge.slider_vertical {
-    padding-top: 0px;
-    padding-left: 60px;
-    .slider__badge {
-        display: block;
-    }
+.a99-slider_show-badge.a99-slider_vertical {
+    padding-left: 50px;
 }
 
   
@@ -167,26 +185,27 @@
 // modifer to show vertical slider
 //////////////////////////////////////////////////////////////
 
-.slider_vertical {
+.a99-slider_vertical {
     flex-direction: row;
     height: 100%;
     width: auto;
+    padding: @slider-padding 0;
 
-    .slider__rail {
+    .a99-slider__rail {
         width: @rail-thicknes;
         height: 100%;
         margin-left: @handler-size / 2 -  @rail-thicknes / 2;
         margin-top: 0;
       }
 
-    .slider__rail-hilighted {
+    .a99-slider__rail-hilighted {
         width: 100%;
         left: auto; right: auto;
-        top: 10%;
-        height: 50%;  
+        top: 0%;
+        height: 100%;  
     }
 
-    .slider__handler {
+    .a99-slider__handler {
         left: @rail-thicknes / 2 - @handler-size / 2;
 
         &_position_left {
@@ -199,12 +218,12 @@
         }
     }
 
-    .slider__badge {
+    .a99-slider__badge {
         transform: translateY(calc(-50% + @handler-size / 2));
         right: @handler-size + 5px;
     }
     
-    .slider__badge::after {
+    .a99-slider__badge::after {
 
         border-top-color: transparent;
         border-left-color: @badge-color;
@@ -214,25 +233,25 @@
         transform: translateY(-50%);
     }
 
-    .slider__tick-scale {
+    .a99-slider__tick-scale {
         flex-direction: column;
     }
       
-    .slider__main-tick {
-        width: 15px;
-        height: 3px;
+    .a99-slider__main-tick {
+        width: @main-tick-height;
+        height: @main-tick-width;
         margin-top:  0;
-        margin-left: 8px;
+        margin-left:  @handler-size / 2;
     }
       
-    .slider__aux-tick {
-        width: 5px;
-        height: 2px;
+    .a99-slider__aux-tick {
+        width: @aux-tick-height;
+        height: @aux-tick-width;
         margin-top: 0;
-        margin-left: 8px;
+        margin-left:  @handler-size / 2;
     }
 
-    .slider__digital-scale {
+    .a99-slider__digital-scale {
         flex-direction: column-reverse;
         margin-left: @handler-size / 2;
         margin-top: 0;
@@ -240,16 +259,16 @@
         height: 100%;
     }
     
-    .slider__digit {
-        display: table-cell;
-        vertical-align: middle;
-        outline: dotted red 1px;
+    .a99-slider__digit {
+        padding-right: 1.5ex;
+        text-align: left;
         line-height: inherit;
 
         &:first-child {
             position: absolute;
             left: auto;
             bottom: 0;
+            padding: 0;
             line-height: normal;
         }
         
@@ -257,6 +276,7 @@
             position: absolute;
             right: auto;
             top: 0;
+            padding: 0;
             line-height: normal;
         }      
     }
