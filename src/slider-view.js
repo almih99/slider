@@ -2,12 +2,13 @@ import SliderUIModel from "./slider-ui-model.js";
 import SliderController from "./slider-controller.js";
 
 const template = document.createElement("template");
+
+
+ // a99-slider_vertical
+ // a99-slider_show-badge
+
 template.innerHTML = `
 <div class="a99-slider">
-<!--
-  a99-slider_vertical
-  a99-slider_show-badge
--->
 
   <div class="a99-slider__rail">
     <div class="a99-slider__rail-hilighted">
@@ -18,7 +19,6 @@ template.innerHTML = `
           <div class="a99-slider__badge">365</div>
       </div>
     </div>
-    
   </div>
 
   <div class="a99-slider__tick-scale"></div>
@@ -28,7 +28,6 @@ template.innerHTML = `
 
 class SliderView {
   constructor (node, uiModel) {
-console.log(node, uiModel);
     this.node = node;
     this.uiModel=uiModel;
 
@@ -44,8 +43,30 @@ console.log(node, uiModel);
 
   }
 
-  setValue(percentage) {
-    // view don't care about actual size of everething. It uses only percents.
+  setValue(minPercent, minText, maxPercent, maxText) {
+    // Hide unused knobs
+    const knobs=this.node.querySelectorAll(".a99-slider__handler");
+    knobs[0].style.display = isNaN(minPercent)? "none" : "block";
+    knobs[1].style.display = isNaN(maxPercent)? "none" : "block";
+    // normalization
+    minPercent = isNaN(minPercent) ? 0 : minPercent;
+    minPercent= Math.max(minPercent, 0);
+    maxPercent = isNaN(maxPercent) ? 0 : maxPercent;
+    maxPercent= Math.min(maxPercent, 100);
+    // setting range
+    const rangeElem = this.node.querySelector(".a99-slider__rail-hilighted");
+    rangeElem.style[
+      this.uiModel.direction==="vertical"? "bottom" : "left"
+    ] = minPercent + "%";
+    rangeElem.style[
+      this.uiModel.direction==="vertical"? "height" : "width"
+    ] = maxPercent - minPercent + "%";
+    // setting badges text
+    const badges = this.node.querySelectorAll(".a99-slider__badge");
+    badges[0].innerHTML = minText;
+    badges[1].innerHTML = maxText;
+ 
+
   }
 
   _onMouseDown (event) {
@@ -137,6 +158,8 @@ console.log(node, uiModel);
         const labels=this.node.querySelector(".a99-slider__digital-scale");
         this._drawLabels(labels, this.uiModel.labels);
       }
+
+      // notify controller
   }
   
 }

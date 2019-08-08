@@ -15,9 +15,10 @@ window.addEventListener("load", function (e) {
     
     uimodel.ticks=10;
     uimodel.subticks=5;
-    uimodel.labels=[0,20,40,60,80,100];
+    uimodel.labels=[10,20,40,60,80,100];
     uimodel.showValue=true;
     view = new SliderView(document.getElementById("slider1"), uimodel);
+    view.setValue(10, 10, 90, 90);
 
     uimodel2 = new SliderUIModel();
     uimodel2.direction = "vertical";
@@ -25,7 +26,8 @@ window.addEventListener("load", function (e) {
     uimodel2.subticks=10;
     uimodel2.labels=["min",100,200,300,400,"max"];
     uimodel2.showValue=true;
-    view = new SliderView(document.getElementById("slider2"), uimodel2);
+    view2 = new SliderView(document.getElementById("slider2"), uimodel2);
+    view2.setValue(20, 20, 80, 80);
 });
 
 
