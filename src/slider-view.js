@@ -1,11 +1,11 @@
-import SliderUIModel from "./slider-ui-model.js";
-import SliderController from "./slider-controller.js";
+SliderUIModel = require("./slider-ui-model.js");
+SliderController = require("./slider-controller.js");
 
+/**
+ * html template for slider
+ * @constant
+ */
 const template = document.createElement("template");
-
-
- // a99-slider_vertical
- // a99-slider_show-badge
 
 template.innerHTML = `
 <div class="a99-slider">
@@ -26,7 +26,23 @@ template.innerHTML = `
   
 </div>`;
 
+/**
+ * View class for slider
+ * 
+ * Interacts with SliderController by sending notification and
+ * recieving new data through `SliderView#setValue()` call.
+ * 
+ * Interacts with sliderUIModel directly.
+ */
 class SliderView {
+
+  /**
+   * Constructor for SliderView
+   * 
+   * @constructor
+   * @param {HTMLElement} node Node to mount slider
+   * @param {SliderUIModel} uiModel UI options
+   */
   constructor (node, uiModel) {
     this.node = node;
     this.uiModel=uiModel;
@@ -43,16 +59,23 @@ class SliderView {
 
   }
 
-  setValue(minPercent, minText, maxPercent, maxText) {
+  /**
+   * Moves knobs to new values (in percent) and sets text of badges.
+   * If corresponding to knob value is `NaN`, hides knob.
+   * 
+   * @param {number} minPercent position of th left knob
+   * @param {*} minText content of the left badge
+   * @param {number} maxPercent position of the right knob
+   * @param {*} maxText content of the right badge
+   */
+  setValue (minPercent, minText, maxPercent, maxText) {
     // Hide unused knobs
     const knobs=this.node.querySelectorAll(".a99-slider__handler");
     knobs[0].style.display = isNaN(minPercent)? "none" : "block";
     knobs[1].style.display = isNaN(maxPercent)? "none" : "block";
     // normalization
-    minPercent = isNaN(minPercent) ? 0 : minPercent;
-    minPercent= Math.max(minPercent, 0);
-    maxPercent = isNaN(maxPercent) ? 0 : maxPercent;
-    maxPercent= Math.min(maxPercent, 100);
+    minPercent = isNaN(minPercent) ? 0 : Math.max(minPercent, 0);
+    maxPercent = isNaN(maxPercent) ? 0 : Math.min(maxPercent, 100);
     // setting range
     const rangeElem = this.node.querySelector(".a99-slider__rail-hilighted");
     rangeElem.style[
@@ -65,26 +88,80 @@ class SliderView {
     const badges = this.node.querySelectorAll(".a99-slider__badge");
     badges[0].innerHTML = minText;
     badges[1].innerHTML = maxText;
- 
-
   }
 
+  /**
+   * Handler for starting drag process.
+   * 
+   * Attached to knobs when `SliderView` is constructed.
+   * 
+   * !! Method is binded to `SliderView` object
+   * 
+   * @private
+   * @param {MouseEvent} event 
+   */
   _onMouseDown (event) {
-
+    // set mousemove handler
+    // set mouseup handler
+    // change knobs vertical positions
   }
 
+  /**
+   * Handler for dragging knob process.
+   * 
+   * Attached to `document` when user press mouse button on knob.
+   * 
+   * Detached when mouse button relized.
+   * 
+   * !! Method is binded to `SliderView` object
+   * 
+   * @private
+   * @param {MouseEvent} event 
+   */
   _onMouseMove (event) {
-
+    // calculate position
+    // set position to controller
   }
 
+  /**
+   * Handler for releasing mouse button.
+   * 
+   * Attached to `document` when user press mouse button on knob.
+   * 
+   * Detached when mouse button relized.
+   * 
+   * !! Method is binded to `SliderView` object
+   * 
+   * @private
+   * @param {MouseEvent} event 
+   */
   _onMouseUp (event) {
-
+    // clear move handler
+    // clear mouseup handler
   }
 
+  /**
+   * Handler for resizing window.
+   * 
+   * Because of fixed sizes in numeric lables.
+   * 
+   * !! Method is binded to `SliderView` object.
+   * 
+   * @private
+   * @param {MouseEvent} event 
+   */
   _onResize (event) {
     this.render();
   }
 
+  /**
+   * Draws ruler ticks
+   * 
+   * @private
+   * @param {HTMLElement} where where to draw
+   * @param {number} mainTicksCount main ruler spans amount
+   * @param {number} auxTicksCount auxilary ruler ticks amount
+   */
   _drawTicks (where, mainTicksCount, auxTicksCount) {
     for(let i=0; i<=mainTicksCount; i++) {
       const mainTicket = document.createElement("div");
@@ -100,6 +177,13 @@ class SliderView {
     }
   }
 
+  /**
+   * Draws labels on ruler
+   * 
+   * @private
+   * @param {HTMLElement} where where to draw
+   * @param {*[]} numberList 
+   */
   _drawLabels (where, numberList) {
 
     function adjustHorizontalSpacing() {
@@ -129,6 +213,11 @@ class SliderView {
     }
   }
 
+  /**
+   * Rendering function.
+   * 
+   * Disposes html template of slider in DOM node and sets some styles
+   */
   render () {
       this.node.innerHTML="";
       this.node.appendChild(template.content.cloneNode(true));

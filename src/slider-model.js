@@ -20,7 +20,7 @@ class SliderModel extends Subject {
      * @param {number} [max] maximal value
      * @param {number} [step] value step
      */
-    constructor (value=0, min=0, max=100, step=0) {
+    constructor (value=0, min=0, max=100, step=1) {
         super();
         this.createObserverableProperty("value", value);
         this.createObserverableProperty("min", min);
