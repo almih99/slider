@@ -1,9 +1,22 @@
-import SliderModel from "./slider-model.js";
-import SliderView from "./slider-view.js";
-import Subject from "./subject.js";
+const SliderModel = require("./slider-model.js");
+const SliderView = require("./slider-view.js");
+const Subject = require("./subject.js");
 
 class SliderController extends Subject {
+    constructor (model, view) {
+        super();
+        this.model = model;
+        this.view = view;
+
+        this.view.register(this.handlePositionChange, this);
+
+    }
+
+    handlePositionChange(pos1, pos2) {
+        this.view.setValue(pos1, pos1, pos2, pos2);
+    }
+
 
 }
 
-export default SliderController;
+module.exports = SliderController;

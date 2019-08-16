@@ -58,6 +58,7 @@
         left: 0%;
         width: 100%;
         border-radius: @rail-thicknes / 2;
+        z-index: 0;
     }
 
     &__handler {
@@ -74,10 +75,12 @@
 
         &_position_left {
             left: -@handler-size / 2;
+            z-index:1;
         }
         
         &_position_right {
             right: -@handler-size / 2;
+            z-index: 2;
         }
 
         &:hover {

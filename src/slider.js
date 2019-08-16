@@ -6,28 +6,37 @@ const SliderController = require("./slider-controller.js");
 let uimodel;
 let view;
 
-console.log("in slider.js");
-console.log(document);
+
+class Slider {
+    constructor (placement, model=new SliderModel(), uiModel=new SliderUIModel()) {
+        this.data = model;        
+        this.uiData = uiModel;
+        this.view = new SliderView(placement, this.uiData);
+        this.controller = new SliderController(this.data, this.view);
+        placement.data=this.data;
+        placement.uiData=this.uiData;
+    }
+}
 
 window.addEventListener("load", function (e) {
-    console.log("in onload handler");
-    uimodel = new SliderUIModel();
-    
-    uimodel.ticks=10;
-    uimodel.subticks=5;
-    uimodel.labels=[10,20,40,60,80,100];
-    uimodel.showValue=true;
-    view = new SliderView(document.getElementById("slider1"), uimodel);
-    view.setValue(10, 10, 90, 90);
 
-    uimodel2 = new SliderUIModel();
-    uimodel2.direction = "vertical";
-    uimodel2.ticks=5;
-    uimodel2.subticks=10;
-    uimodel2.labels=["min",100,200,300,400,"max"];
-    uimodel2.showValue=true;
-    view2 = new SliderView(document.getElementById("slider2"), uimodel2);
-    view2.setValue(20, 20, 80, 80);
+    // horizontal
+    h = new Slider(document.getElementById("slider1"));
+    h.uiData.ticks=10;
+    h.uiData.subticks=5;
+    h.uiData.labels=[10,20,40,60,80,100];
+    h.uiData.showValue=true;
+
+    // vertical
+    v = new Slider(document.getElementById("slider2"));
+    v.uiData.direction = "vertical";
+    v.uiData.ticks=5;
+    v.uiData.subticks=10;
+    v.uiData.labels=["min",100,200,300,400,"max"];
+    v.uiData.showValue=true;
+
 });
+
+
 
 

@@ -1,5 +1,6 @@
 SliderUIModel = require("./slider-ui-model.js");
 SliderController = require("./slider-controller.js");
+const Subject = require("./subject.js");
 
 /**
  * html template for slider
@@ -34,7 +35,7 @@ template.innerHTML = `
  * 
  * Interacts with sliderUIModel directly.
  */
-class SliderView {
+class SliderView extends Subject {
 
   /**
    * Constructor for SliderView
@@ -44,6 +45,8 @@ class SliderView {
    * @param {SliderUIModel} uiModel UI options
    */
   constructor (node, uiModel) {
+    super();
+
     this.node = node;
     this.uiModel=uiModel;
 
@@ -56,6 +59,7 @@ class SliderView {
     this.render();
 
     window.addEventListener("resize", this._onResize);
+    this.node.addEventListener("mousedown", this._onMouseDown);
 
   }
 
@@ -102,8 +106,14 @@ class SliderView {
    */
   _onMouseDown (event) {
     // set mousemove handler
+    document.addEventListener("mousemove", this._onMouseMove);
     // set mouseup handler
-    // change knobs vertical positions
+    document.addEventListener("mouseup", this._onMouseUp);
+    // change knobs z-index
+    for(knob of this.node.querySelectorAll(".a99-slider__handler")) {
+      knob.style.zIndex = (knob === event.target) ? "2" : 1;
+    }
+    console.log("event listeners attached");
   }
 
   /**
@@ -120,7 +130,19 @@ class SliderView {
    */
   _onMouseMove (event) {
     // calculate position
-    // set position to controller
+    const sliderBox = this.node.querySelector(".a99-slider__rail").getBoundingClientRect();
+    let position;
+    if(this.uiModel.direction==="vertical") {
+      position = (sliderBox.bottom - event.clientY) / (sliderBox.bottom - sliderBox.top);
+    } else {
+      position = (event.clientX - sliderBox.left) / (sliderBox.right - sliderBox.left);
+    }
+    position = Math.max(position, 0);
+    position = Math.min(position, 1);
+
+    // send position to controller // second parametr set to which?
+    this.notifyObservers(position*100, 80);
+
   }
 
   /**
@@ -135,9 +157,11 @@ class SliderView {
    * @private
    * @param {MouseEvent} event 
    */
-  _onMouseUp (event) {
-    // clear move handler
-    // clear mouseup handler
+  _onMouseUp (event) {"mouseup", this._onMouseUp
+    // clear handlers"mouseup", this._onMouseUp
+    document.removeEventListener("mouseup", this._onMouseUp);
+    document.removeEventListener("mousemove", this._onMouseMove);
+    console.log("event listeners removed")
   }
 
   /**
