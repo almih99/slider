@@ -54,13 +54,18 @@ class SliderView extends Subject {
     this._onMouseMove = this._onMouseMove.bind(this);
     this._onMouseUp = this._onMouseUp.bind(this);
     this._onResize =  this._onResize.bind(this);
+    this._onClick =  this._onClick.bind(this);
+
+    this._minPercent = 0;
+    this._maxPercent = 100;
+    this._currentKnob = null;
 
     uiModel.register(this.render, this);
     this.render();
 
     window.addEventListener("resize", this._onResize);
     this.node.addEventListener("mousedown", this._onMouseDown);
-
+    this.node.addEventListener("click", this._onClick);
   }
 
   /**
@@ -80,6 +85,9 @@ class SliderView extends Subject {
     // normalization
     minPercent = isNaN(minPercent) ? 0 : Math.max(minPercent, 0);
     maxPercent = isNaN(maxPercent) ? 0 : Math.min(maxPercent, 100);
+    // store values in object for easy access
+    this._minPercent = minPercent;
+    this._maxPercent = maxPercent;
     // setting range
     const rangeElem = this.node.querySelector(".a99-slider__rail-hilighted");
     rangeElem.style[
@@ -113,7 +121,7 @@ class SliderView extends Subject {
     for(knob of this.node.querySelectorAll(".a99-slider__handler")) {
       knob.style.zIndex = (knob === event.target) ? "2" : 1;
     }
-    console.log("event listeners attached");
+    this._currentKnob = event.target.closest(".a99-slider__handler");
   }
 
   /**
@@ -129,6 +137,12 @@ class SliderView extends Subject {
    * @param {MouseEvent} event 
    */
   _onMouseMove (event) {
+    // check if drag started;
+    if(!this._currentKnob) return;
+
+    // turn off transition
+    this.node.querySelector(".a99-slider__rail-hilighted").style.transition="none";
+
     // calculate position
     const sliderBox = this.node.querySelector(".a99-slider__rail").getBoundingClientRect();
     let position;
@@ -137,12 +151,16 @@ class SliderView extends Subject {
     } else {
       position = (event.clientX - sliderBox.left) / (sliderBox.right - sliderBox.left);
     }
-    position = Math.max(position, 0);
-    position = Math.min(position, 1);
+    position = 100 * Math.min(Math.max(position, 0), 1);
 
-    // send position to controller // second parametr set to which?
-    this.notifyObservers(position*100, 80);
-
+    // send position to controller
+    if(this._currentKnob.classList.contains("a99-slider__handler_position_left")) {
+      // left knob was changed
+      this.notifyObservers(Math.min(position, this._maxPercent), this._maxPercent);
+    } else {
+      // right knob was changed
+      this.notifyObservers(this._minPercent, Math.max(position, this._minPercent));
+    }
   }
 
   /**
@@ -157,11 +175,41 @@ class SliderView extends Subject {
    * @private
    * @param {MouseEvent} event 
    */
-  _onMouseUp (event) {"mouseup", this._onMouseUp
+  _onMouseUp (event) {
+    // turn on transition
+    this.node.querySelector(".a99-slider__rail-hilighted").style.transition="";
     // clear handlers"mouseup", this._onMouseUp
     document.removeEventListener("mouseup", this._onMouseUp);
     document.removeEventListener("mousemove", this._onMouseMove);
-    console.log("event listeners removed")
+    this._currentKnob = null;
+  }
+
+  /**
+   * Handler for clicking on rail.
+   * 
+   * @param {MouseEvent} event 
+   */
+  _onClick (event) {
+    if(!(event.target.classList.contains("a99-slider__rail-hilighted") ||
+         event.target.classList.contains("a99-slider__rail"))) {
+      // unexpected place
+      return
+    }
+    // calculate position
+    const sliderBox = this.node.querySelector(".a99-slider__rail").getBoundingClientRect();
+    let position;
+    if(this.uiModel.direction==="vertical") {
+      position = (sliderBox.bottom - event.clientY) / (sliderBox.bottom - sliderBox.top);
+    } else {
+      position = (event.clientX - sliderBox.left) / (sliderBox.right - sliderBox.left);
+    }
+    position = 100 * Math.min(Math.max(position, 0), 1);
+    // Send position to controller
+    if(Math.abs(position - this._maxPercent) < Math.abs(position - this._minPercent)) {
+      this.notifyObservers(this._minPercent, Math.max(position, this._minPercent));
+    } else {
+      this.notifyObservers(Math.min(position, this._maxPercent), this._maxPercent);
+    }
   }
 
   /**

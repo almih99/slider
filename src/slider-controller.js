@@ -13,7 +13,7 @@ class SliderController extends Subject {
     }
 
     handlePositionChange(pos1, pos2) {
-        this.view.setValue(pos1, pos1, pos2, pos2);
+        this.view.setValue(pos1, Math.round(pos1), pos2, Math.round(pos2));
     }
 
 
